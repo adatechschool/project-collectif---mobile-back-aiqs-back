@@ -80,6 +80,25 @@ func createEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newSpot)
 }
 
+func createPost(w http.ResponseWriter, r *http.Request) {
+	stmt, err := db.Prepare("INSERT INTO posts(title) VALUES(?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+	title := keyVal["title"]
+	_, err = stmt.Exec(title)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Fprintf(w, "New post was created")
+}
+
 func getOneEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := mux.Vars(r)["id"]
 
@@ -93,6 +112,44 @@ func getOneEvent(w http.ResponseWriter, r *http.Request) {
 func getAllEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(surfSpots)
 }
+
+/* func getAllEvents(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var spots []Surf
+	res, err := db.Query("SELECT * from surfspots")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer res.Close()
+	for res.Next() {
+		var spot Surf
+		err := res.Scan(&spot.ID, &spot.Destination)
+		if err != nil {
+			panic(err.Error())
+		}
+		spots = append(spots, spot)
+	}
+	json.NewEncoder(w).Encode(spots)
+} */
+
+/* func getPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var posts []Post
+	result, err := db.Query("SELECT id, title from posts")
+	if err != nil {
+	  panic(err.Error())
+	}
+	defer result.Close()
+	for result.Next() {
+	  var post Post
+	  err := result.Scan(&post.ID, &post.Title)
+	  if err != nil {
+		panic(err.Error())
+	  }
+	  posts = append(posts, post)
+	}
+	json.NewEncoder(w).Encode(posts)
+  } */
 
 func updateEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := mux.Vars(r)["id"]
@@ -135,6 +192,12 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/surfdatabase")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
 	router.HandleFunc("/api/createSpot", createEvent).Methods("POST")
@@ -143,7 +206,4 @@ func main() {
 	router.HandleFunc("/api/spots/{id}", updateEvent).Methods("PATCH")
 	router.HandleFunc("/api/spots/{id}", deleteEvent).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8080", router))
-
-	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/surfdatabase")
-
 }
