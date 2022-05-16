@@ -14,6 +14,62 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func UnmarshalSurf(data []byte) (Surf, error) {
+	var r Surf
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *Surf) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+type Surf struct {
+	Records []Record `json:"records"`
+}
+
+type Record struct {
+	ID     string `json:"id"`
+	Fields Fields `json:"fields"`
+}
+
+type Fields struct {
+	SurfBreak               []string `json:"Surf Break"`
+	DifficultyLevel         int64    `json:"Difficulty Level"`
+	Destination             string   `json:"Destination"`
+	MagicSeaweedLink        string   `json:"Magic Seaweed Link"`
+	Photos                  []Photo  `json:"Photos"`
+	PeakSurfSeasonBegins    string   `json:"Peak Surf Season Begins"`
+	DestinationStateCountry string   `json:"Destination State/Country"`
+	PeakSurfSeasonEnds      string   `json:"Peak Surf Season Ends"`
+	Address                 string   `json:"Address"`
+	Lat                     float64  `json:"lat"`
+	Lng                     float64  `json:"lng"`
+}
+
+type Photo struct {
+	ID         string     `json:"id"`
+	Width      int64      `json:"width"`
+	Height     int64      `json:"height"`
+	URL        string     `json:"url"`
+	Filename   string     `json:"filename"`
+	Size       int64      `json:"size"`
+	Type       string     `json:"type"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+}
+
+type Thumbnails struct {
+	Small Full `json:"small"`
+	Large Full `json:"large"`
+	Full  Full `json:"full"`
+}
+
+type Full struct {
+	URL    string `json:"url"`
+	Width  int64  `json:"width"`
+	Height int64  `json:"height"`
+}
+
 type event struct {
 	ID          string `json:"ID"`
 	Title       string `json:"Title"`
@@ -103,6 +159,13 @@ func main() {
 	router.HandleFunc("/events/{id}", deleteEvent).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8080", router))
 
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := "root:root@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		DSN:                       "gorm:gorm@tcp(localhost:3306)/gorm?charset=utf8&parseTime=True&loc=Local", // data source name
+		DefaultStringSize:         256,                                                                        // default size for string fields
+		DisableDatetimePrecision:  true,                                                                       // disable datetime precision, which not supported before MySQL 5.6
+		DontSupportRenameIndex:    true,                                                                       // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB
+		DontSupportRenameColumn:   true,                                                                       // `change` when rename column, rename column not supported before MySQL 8, MariaDB
+		SkipInitializeWithVersion: false,                                                                      // auto configure based on currently MySQL version
+	}), &gorm.Config{})
 }
