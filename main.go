@@ -8,11 +8,15 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"database/sql"
 
 	"github.com/gorilla/mux"
+
+	_ "github.com/go-sql-driver/mysql"
 )
+
+var db *sql.DB
+var err error
 
 func UnmarshalSurf(data []byte) (Surf, error) {
 	var r Surf
@@ -25,64 +29,36 @@ func (r *Surf) Marshal() ([]byte, error) {
 }
 
 type Surf struct {
-	Records []Record `json:"records"`
+	ID                      string  `json:"id"`
+	SurfBreak               string  `json:"SurfBreak"`
+	DifficultyLevel         int64   `json:"DifficultyLevel"`
+	Destination             string  `json:"Destination"`
+	MagicSeaweedLink        string  `json:"MagicSeaweedLink"`
+	Photos                  string  `json:"Photos"`
+	PeakSurfSeasonBegins    string  `json:"PeakSurfSeasonBegins"`
+	DestinationStateCountry string  `json:"DestinationStateCountry"`
+	PeakSurfSeasonEnds      string  `json:"PeakSurfSeasonEnds"`
+	Address                 string  `json:"Address"`
+	Lat                     float64 `json:"lat"`
+	Lng                     float64 `json:"lng"`
 }
 
-type Record struct {
-	ID     string `json:"id"`
-	Fields Fields `json:"fields"`
-}
+type allSurfSpots []Surf
 
-type Fields struct {
-	SurfBreak               []string `json:"Surf Break"`
-	DifficultyLevel         int64    `json:"Difficulty Level"`
-	Destination             string   `json:"Destination"`
-	MagicSeaweedLink        string   `json:"Magic Seaweed Link"`
-	Photos                  []Photo  `json:"Photos"`
-	PeakSurfSeasonBegins    string   `json:"Peak Surf Season Begins"`
-	DestinationStateCountry string   `json:"Destination State/Country"`
-	PeakSurfSeasonEnds      string   `json:"Peak Surf Season Ends"`
-	Address                 string   `json:"Address"`
-	Lat                     float64  `json:"lat"`
-	Lng                     float64  `json:"lng"`
-}
-
-type Photo struct {
-	ID         string     `json:"id"`
-	Width      int64      `json:"width"`
-	Height     int64      `json:"height"`
-	URL        string     `json:"url"`
-	Filename   string     `json:"filename"`
-	Size       int64      `json:"size"`
-	Type       string     `json:"type"`
-	Thumbnails Thumbnails `json:"thumbnails"`
-}
-
-type Thumbnails struct {
-	Small Full `json:"small"`
-	Large Full `json:"large"`
-	Full  Full `json:"full"`
-}
-
-type Full struct {
-	URL    string `json:"url"`
-	Width  int64  `json:"width"`
-	Height int64  `json:"height"`
-}
-
-type event struct {
-	ID          string `json:"ID"`
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
-}
-
-type allEvents []event
-
-var events = allEvents{
+var surfSpots = allSurfSpots{
 	{
-		ID:          "1",
-		Title:       "Introduction to Golang",
-		Description: "Come join us for a chance to learn how golang works and get to eventually try it out",
+		ID:                      "1",
+		SurfBreak:               "Reef Break",
+		DifficultyLevel:         4,
+		Destination:             "Pipeline",
+		MagicSeaweedLink:        "https://magicseaweed.com/Pipeline-Backdoor-Surf-Report/616/",
+		Photos:                  "https://dl.airtable.com/ZuXJZ2NnTF40kCdBfTld_thomas-ashlock-64485-unsplash.jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=f1f4f021755f3333",
+		PeakSurfSeasonBegins:    "2018-07-22",
+		DestinationStateCountry: "Oahu, Hawaii",
+		PeakSurfSeasonEnds:      "2018-08-31",
+		Address:                 "Pipeline, Oahu, Hawaii",
+		Lat:                     21.6650562,
+		Lng:                     -158.05120469999997,
 	},
 }
 
@@ -91,23 +67,23 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 }
 
 func createEvent(w http.ResponseWriter, r *http.Request) {
-	var newEvent event
+	var newSpot Surf
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
 	}
 
-	json.Unmarshal(reqBody, &newEvent)
-	events = append(events, newEvent)
+	json.Unmarshal(reqBody, &newSpot)
+	surfSpots = append(surfSpots, newSpot)
 	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(newEvent)
+	json.NewEncoder(w).Encode(newSpot)
 }
 
 func getOneEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := mux.Vars(r)["id"]
 
-	for _, singleEvent := range events {
+	for _, singleEvent := range surfSpots {
 		if singleEvent.ID == eventID {
 			json.NewEncoder(w).Encode(singleEvent)
 		}
@@ -115,12 +91,12 @@ func getOneEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllEvents(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(events)
+	json.NewEncoder(w).Encode(surfSpots)
 }
 
 func updateEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := mux.Vars(r)["id"]
-	var updatedEvent event
+	var updatedEvent Surf
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -128,11 +104,20 @@ func updateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	json.Unmarshal(reqBody, &updatedEvent)
 
-	for i, singleEvent := range events {
+	for i, singleEvent := range surfSpots {
 		if singleEvent.ID == eventID {
-			singleEvent.Title = updatedEvent.Title
-			singleEvent.Description = updatedEvent.Description
-			events = append(events[:i], singleEvent)
+			singleEvent.SurfBreak = updatedEvent.SurfBreak
+			singleEvent.DifficultyLevel = updatedEvent.DifficultyLevel
+			singleEvent.Destination = updatedEvent.Destination
+			singleEvent.MagicSeaweedLink = updatedEvent.MagicSeaweedLink
+			singleEvent.Photos = updatedEvent.Photos
+			singleEvent.PeakSurfSeasonBegins = updatedEvent.PeakSurfSeasonBegins
+			singleEvent.PeakSurfSeasonEnds = updatedEvent.PeakSurfSeasonEnds
+			singleEvent.Address = updatedEvent.Address
+			singleEvent.Lat = updatedEvent.Lat
+			singleEvent.Lng = updatedEvent.Lng
+
+			surfSpots = append(surfSpots[:i], singleEvent)
 			json.NewEncoder(w).Encode(singleEvent)
 		}
 	}
@@ -141,9 +126,9 @@ func updateEvent(w http.ResponseWriter, r *http.Request) {
 func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := mux.Vars(r)["id"]
 
-	for i, singleEvent := range events {
+	for i, singleEvent := range surfSpots {
 		if singleEvent.ID == eventID {
-			events = append(events[:i], events[i+1:]...)
+			surfSpots = append(surfSpots[:i], surfSpots[i+1:]...)
 			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", eventID)
 		}
 	}
@@ -152,20 +137,13 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/event", createEvent).Methods("POST")
-	router.HandleFunc("/events", getAllEvents).Methods("GET")
-	router.HandleFunc("/events/{id}", getOneEvent).Methods("GET")
-	router.HandleFunc("/events/{id}", updateEvent).Methods("PATCH")
-	router.HandleFunc("/events/{id}", deleteEvent).Methods("DELETE")
+	router.HandleFunc("/api/createSpot", createEvent).Methods("POST")
+	router.HandleFunc("/api/spots", getAllEvents).Methods("GET")
+	router.HandleFunc("/api/spots/{id}", getOneEvent).Methods("GET")
+	router.HandleFunc("/api/spots/{id}", updateEvent).Methods("PATCH")
+	router.HandleFunc("/api/spots/{id}", deleteEvent).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8080", router))
 
-	dsn := "root:root@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:                       "gorm:gorm@tcp(localhost:3306)/gorm?charset=utf8&parseTime=True&loc=Local", // data source name
-		DefaultStringSize:         256,                                                                        // default size for string fields
-		DisableDatetimePrecision:  true,                                                                       // disable datetime precision, which not supported before MySQL 5.6
-		DontSupportRenameIndex:    true,                                                                       // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB
-		DontSupportRenameColumn:   true,                                                                       // `change` when rename column, rename column not supported before MySQL 8, MariaDB
-		SkipInitializeWithVersion: false,                                                                      // auto configure based on currently MySQL version
-	}), &gorm.Config{})
+	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/surfdatabase")
+
 }

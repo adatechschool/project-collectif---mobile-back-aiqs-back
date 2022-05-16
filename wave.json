@@ -1,0 +1,17 @@
+{
+
+
+        "id": 1,
+          "SurfBreak": "Reef Break" ,
+          "DifficultyLevel": 4,
+          "Destination": "Pipeline",
+          "MagicSeaweedLink": "https://magicseaweed.com/Pipeline-Backdoor-Surf-Report/616/",
+          "Photos": "https://dl.airtable.com/ZuXJZ2NnTF40kCdBfTld_thomas-ashlock-64485-unsplash.jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=f1f4f021755f3333",
+          "PeakSurfSeasonBegins": "2018-07-22",
+          "DestinationStateCountry": "Oahu, Hawaii",
+          "PeakSurfSeasonEnds": "2018-08-31",
+          "Address": "Pipeline, Oahu, Hawaii",
+          "lat":21.6650562,
+          "lng":-158.05120469999997
+        }
+    
