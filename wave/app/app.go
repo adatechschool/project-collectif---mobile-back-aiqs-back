@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"project-collectif---mobile-back-aiqs-back/config"
-	"project-collectif---mobile-back-aiqs-back/handler"
-	"project-collectif---mobile-back-aiqs-back/model"
+	"wave/config"
+	"wave/handler"
+	"wave/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

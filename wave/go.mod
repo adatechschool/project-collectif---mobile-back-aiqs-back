@@ -1,4 +1,4 @@
-module github.com/wpferg/services
+module wave
 
 go 1.15
 

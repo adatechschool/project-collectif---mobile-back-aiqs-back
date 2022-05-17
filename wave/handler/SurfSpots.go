@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"project-collectif---mobile-back-aiqs-back/model"
+	"wave/model"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

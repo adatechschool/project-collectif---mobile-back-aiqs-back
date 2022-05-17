@@ -1,10 +1,8 @@
 package main
 
 import (
-	// "project-collectif---mobile-back-aiqs-back/app"
-	// "project-collectif---mobile-back-aiqs-back/config"
-	"github.com/app"
-	"github.com/config"
+	"app"
+	"config"
 )
 
 func main() {
