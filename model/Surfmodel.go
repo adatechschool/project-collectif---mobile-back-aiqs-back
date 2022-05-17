@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Surf struct {
 	gorm.Model
-	//ID                      uint    `gorm:"primaryKey"`
+	ID                      string  `gorm:"primaryKey"`
 	SurfBreak               string  `json:"SurfBreak" gorm:"<-"`
 	DifficultyLevel         int64   `json:"DifficultyLevel" gorm:"<-"`
 	Destination             string  `json:"Destination" gorm:"<-"`
@@ -16,14 +16,6 @@ type Surf struct {
 	Address                 string  `json:"Address" gorm:"<-"`
 	Lat                     float64 `json:"Lat" gorm:"<-"`
 	Lng                     float64 `json:"Lng" gorm:"<-"`
-}
-
-func (e *Surf) Disable() {
-	e.Status = false
-}
-
-func (p *Surf) Enable() {
-	p.Status = true
 }
 
 // DBMigrate will create and migrate the tables, and then make the some relationships if necessary

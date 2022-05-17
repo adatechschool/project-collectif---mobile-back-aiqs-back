@@ -1,29 +1,44 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	// "project-collectif---mobile-back-aiqs-back/app"
+	// "project-collectif---mobile-back-aiqs-back/config"
+	"github.com/app"
+	"github.com/config"
 )
+
+func main() {
+	config := config.GetConfig()
+
+	app := &app.App{}
+	app.Initialize(config)
+	app.Run(":8080")
+}
+
+// import (
+// 	"encoding/json"
+// 	"fmt"
+// 	"log"
+// 	"net/http"
+
+// 	_ "github.com/go-sql-driver/mysql"
+// 	"github.com/gorilla/mux"
+// 	"gorm.io/driver/mysql"
+// 	"gorm.io/gorm"
+// )
 
 /* var db *sql.DB
 var err error */
 
-func UnmarshalSurf(data []byte) (Surf, error) {
-	var r Surf
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
+// func UnmarshalSurf(data []byte) (Surf, error) {
+// 	var r Surf
+// 	err := json.Unmarshal(data, &r)
+// 	return r, err
+// }
 
-func (r *Surf) Marshal() ([]byte, error) {
-	return json.Marshal(r)
-}
+// func (r *Surf) Marshal() ([]byte, error) {
+// 	return json.Marshal(r)
+// }
 
 /* type Surf struct {
 	gorm.Model
@@ -41,9 +56,9 @@ func (r *Surf) Marshal() ([]byte, error) {
 	Lng                     float64 `json:"Lng" gorm:"<-"`
 } */
 
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
-}
+// func homeLink(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprintf(w, "Welcome home!")
+// }
 
 /* func createEvent(w http.ResponseWriter, r *http.Request) {
 	var newSpot Surf
@@ -132,93 +147,93 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	}
 } */
 
-func main() {
-	/* gorm.Open(mysql.Open("surfdatabase.db"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
+// func main() {
+// 	/* gorm.Open(mysql.Open("surfdatabase.db"), &gorm.Config{})
+// 	if err != nil {
+// 		panic("failed to connect database")
 
-	} */
-	dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
+// 	} */
+// 	dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
+// 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// 	if err != nil {
+// 		panic("failed to connect database")
+// 	}
 
-	// Migrate the schema
-	db.AutoMigrate(&Surf{})
+// 	// Migrate the schema
+// 	db.AutoMigrate(&Surf{})
 
-	// Create
-	/* 	db.Create(&Surf{
-		ID:                      "1",
-		SurfBreak:               "Reef Break",
-		DifficultyLevel:         4,
-		Destination:             "Pipeline",
-		MagicSeaweedLink:        "https://magicseaweed.com/Pipeline-Backdoor-Surf-Report/616/",
-		Photos:                  "https://dl.airtable.com/ZuXJZ2NnTF40kCdBfTld_thomas-ashlock-64485-unsplash.jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=f1f4f021755f3333",
-		PeakSurfSeasonBegins:    "2018-07-22",
-		DestinationStateCountry: "Oahu, Hawaii",
-		PeakSurfSeasonEnds:      "2018-08-31",
-		Address:                 "Pipeline, Oahu, Hawaii",
-		Lat:                     21.6650562,
-		Lng:                     -158.05120469999997},
-	) */
-	/* 	db.Create(&Surf{
+// Create
+/* 	db.Create(&Surf{
+	ID:                      "1",
+	SurfBreak:               "Reef Break",
+	DifficultyLevel:         4,
+	Destination:             "Pipeline",
+	MagicSeaweedLink:        "https://magicseaweed.com/Pipeline-Backdoor-Surf-Report/616/",
+	Photos:                  "https://dl.airtable.com/ZuXJZ2NnTF40kCdBfTld_thomas-ashlock-64485-unsplash.jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=f1f4f021755f3333",
+	PeakSurfSeasonBegins:    "2018-07-22",
+	DestinationStateCountry: "Oahu, Hawaii",
+	PeakSurfSeasonEnds:      "2018-08-31",
+	Address:                 "Pipeline, Oahu, Hawaii",
+	Lat:                     21.6650562,
+	Lng:                     -158.05120469999997},
+) */
+/* 	db.Create(&Surf{
 
-		ID:                      "2",
-		SurfBreak:               "Point Break",
-		DifficultyLevel:         5,
-		Destination:             "Supertubes",
-		MagicSeaweedLink:        "https://magicseaweed.com/Jeffreys-Bay-J-Bay-Surf-Report/88/",
-		Photos:                  "https://dl.airtable.com/e3QoP3cFSyykZJOvWGIy_cesar-couto-477018-unsplash%20(1).jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=1d36a62f395cd1d8",
-		PeakSurfSeasonBegins:    "2018-08-01",
-		DestinationStateCountry: "Jeffreys Bay, South Africa",
-		PeakSurfSeasonEnds:      "2018-10-09",
-		Address:                 "Supertubes, Jeffreys Bay, South Africa",
-		Lat:                     -34.031783,
-		Lng:                     24.93159400000002,
-	}) */
+	ID:                      "2",
+	SurfBreak:               "Point Break",
+	DifficultyLevel:         5,
+	Destination:             "Supertubes",
+	MagicSeaweedLink:        "https://magicseaweed.com/Jeffreys-Bay-J-Bay-Surf-Report/88/",
+	Photos:                  "https://dl.airtable.com/e3QoP3cFSyykZJOvWGIy_cesar-couto-477018-unsplash%20(1).jpg?ts=1652704905&userId=usrVSPQAdslUijuds&cs=1d36a62f395cd1d8",
+	PeakSurfSeasonBegins:    "2018-08-01",
+	DestinationStateCountry: "Jeffreys Bay, South Africa",
+	PeakSurfSeasonEnds:      "2018-10-09",
+	Address:                 "Supertubes, Jeffreys Bay, South Africa",
+	Lat:                     -34.031783,
+	Lng:                     24.93159400000002,
+}) */
 
-	db.Create(&Surf{
+// db.Create(&Surf{
 
-		SurfBreak:               "Reef Break",
-		DifficultyLevel:         3,
-		Destination:             "Pasta Point",
-		MagicSeaweedLink:        "https://magicseaweed.com/Maldives-Surf-Forecast/56/",
-		Photos:                  "https://dl.airtable.com/o4SxpoNxTSC49F4P2Hlc_aleksandar-popovski-693255-unsplash.jpg?ts=1652777877&userId=usrVSPQAdslUijuds&cs=c731b4899c3ef796",
-		PeakSurfSeasonBegins:    "2018-04-01",
-		DestinationStateCountry: "Maldives",
-		PeakSurfSeasonEnds:      "2018-05-31",
-		Address:                 "Pasta Point, Maldives",
-		Lat:                     4.317842,
-		Lng:                     73.59173299999998,
-	})
+// 	SurfBreak:               "Reef Break",
+// 	DifficultyLevel:         3,
+// 	Destination:             "Pasta Point",
+// 	MagicSeaweedLink:        "https://magicseaweed.com/Maldives-Surf-Forecast/56/",
+// 	Photos:                  "https://dl.airtable.com/o4SxpoNxTSC49F4P2Hlc_aleksandar-popovski-693255-unsplash.jpg?ts=1652777877&userId=usrVSPQAdslUijuds&cs=c731b4899c3ef796",
+// 	PeakSurfSeasonBegins:    "2018-04-01",
+// 	DestinationStateCountry: "Maldives",
+// 	PeakSurfSeasonEnds:      "2018-05-31",
+// 	Address:                 "Pasta Point, Maldives",
+// 	Lat:                     4.317842,
+// 	Lng:                     73.59173299999998,
+// })
 
-	// Read
-	//var surf Surf
-	//db.First(&surf, 1)                 // find product with integer primary key
-	//db.First(&surf, "code = ?", "D42") // find product with code D42
+// Read
+//var surf Surf
+//db.First(&surf, 1)                 // find product with integer primary key
+//db.First(&surf, "code = ?", "D42") // find product with code D42
 
-	// Update - update product's price to 200
-	//db.Model(&surf).Update("Price", 200)
-	// Update - update multiple fields
-	//db.Model(&surf).Updates(Surf{Price: 200, Code: "F42"}) // non-zero fields
-	//db.Model(&surf).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+// Update - update product's price to 200
+//db.Model(&surf).Update("Price", 200)
+// Update - update multiple fields
+//db.Model(&surf).Updates(Surf{Price: 200, Code: "F42"}) // non-zero fields
+//db.Model(&surf).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
 
-	// Delete - delete product
-	//	db.Delete(&surf, 1)
+// Delete - delete product
+//	db.Delete(&surf, 1)
 
-	/* 	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/surfdatabase")
-	   	if err != nil {
-	   		panic(err.Error())
-	   	}
-	   	defer db.Close() */
+/* 	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/surfdatabase")
+   	if err != nil {
+   		panic(err.Error())
+   	}
+   	defer db.Close() */
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	/* 	router.HandleFunc("/api/createSpot", createEvent).Methods("POST")
-	   	router.HandleFunc("/api/spots", getAllEvents).Methods("GET")
-	   	router.HandleFunc("/api/spots/{id}", getOneEvent).Methods("GET")
-	   	router.HandleFunc("/api/spots/{id}", updateEvent).Methods("PATCH")
-	   	router.HandleFunc("/api/spots/{id}", deleteEvent).Methods("DELETE") */
-	log.Fatal(http.ListenAndServe(":8080", router))
-}
+// 	router := mux.NewRouter().StrictSlash(true)
+// 	router.HandleFunc("/", homeLink)
+// 	/* 	router.HandleFunc("/api/createSpot", createEvent).Methods("POST")
+// 	   	router.HandleFunc("/api/spots", getAllEvents).Methods("GET")
+// 	   	router.HandleFunc("/api/spots/{id}", getOneEvent).Methods("GET")
+// 	   	router.HandleFunc("/api/spots/{id}", updateEvent).Methods("PATCH")
+// 	   	router.HandleFunc("/api/spots/{id}", deleteEvent).Methods("DELETE") */
+// 	log.Fatal(http.ListenAndServe(":8080", router))
+// }
