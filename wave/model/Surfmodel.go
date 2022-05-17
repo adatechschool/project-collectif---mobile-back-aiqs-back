@@ -3,7 +3,7 @@ package model
 import "gorm.io/gorm"
 
 type Surf struct {
-	gorm.Model
+	/* gorm.Model */
 	ID                      string  `gorm:"primaryKey"`
 	SurfBreak               string  `json:"SurfBreak" gorm:"<-"`
 	DifficultyLevel         int64   `json:"DifficultyLevel" gorm:"<-"`

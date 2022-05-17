@@ -24,7 +24,7 @@ type App struct {
 
 // App initialize with predefined configuration
 func (a *App) Initialize(config *config.Config) {
-	dsn := "root:@tcp(127.0.0.1:3306)/surfdatabase"
+	dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
