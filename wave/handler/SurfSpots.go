@@ -7,7 +7,9 @@ import (
 	"wave/model"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
+	// "github.com/jinzhu/gorm"
+	// "github.com/go-gorm/gorm"
+	"gorm.io/gorm"
 )
 
 func GetAllSurfSpots(db *gorm.DB, w http.ResponseWriter, r *http.Request) {

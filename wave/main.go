@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app"
-	"config"
+	"wave/app"
+	"wave/config"
 )
 
 func main() {
@@ -151,11 +151,11 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 // 		panic("failed to connect database")
 
 // 	} */
-// 	dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
-// 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-// 	if err != nil {
-// 		panic("failed to connect database")
-// 	}
+// dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
+// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// if err != nil {
+// 	panic("failed to connect database")
+// }
 
 // 	// Migrate the schema
 // 	db.AutoMigrate(&Surf{})

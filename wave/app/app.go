@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -10,7 +9,11 @@ import (
 	"wave/model"
 
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
+	// "github.com/jinzhu/gorm"
+	// "github.com/go-gorm/gorm"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 // App has router and db instances
@@ -21,16 +24,21 @@ type App struct {
 
 // App initialize with predefined configuration
 func (a *App) Initialize(config *config.Config) {
-	dbURI := fmt.Sprintf("%s:%s@/%s?charset=%s&parseTime=True",
-		config.DB.Username,
-		config.DB.Password,
-		config.DB.Name,
-		config.DB.Charset)
-
-	db, err := gorm.Open(config.DB.Dialect, dbURI)
+	dsn := "root:@tcp(127.0.0.1:3306)/surfdatabase"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Could not connect database")
+		panic("failed to connect database")
 	}
+	// dbURI := fmt.Sprintf("%s:%s@/%s?charset=%s&parseTime=True",
+	// 	config.DB.Username,
+	// 	config.DB.Password,
+	// 	config.DB.Name,
+	// 	config.DB.Charset)
+
+	// db, err := gorm.Open(config.DB.Dialect, dbURI)
+	// if err != nil {
+	// 	log.Fatal("Could not connect database")
+	// }
 
 	a.DB = model.DBMigrate(db)
 	a.Router = mux.NewRouter()
@@ -40,11 +48,11 @@ func (a *App) Initialize(config *config.Config) {
 // Set all required routers
 func (a *App) setRouters() {
 	// Routing for handling the projects
-	a.Get("/api/spots", a.GetAllEmployees)
-	a.Post("/api/createSpot", a.CreateEmployee)
-	a.Get("/api/spots/{id}", a.GetEmployee)
-	a.Put("/api/spots/{id}", a.UpdateEmployee)
-	a.Delete("/api/spots/{id}", a.DeleteEmployee)
+	a.Get("/api/spots", a.GetAllSurfSpots)
+	a.Post("/api/createSpot", a.CreateSurfSpots)
+	a.Get("/api/spots/{id}", a.GetSurfSpot)
+	a.Put("/api/spots/{id}", a.UpdateSurfSpot)
+	a.Delete("/api/spots/{id}", a.DeleteSurfSpot)
 
 }
 
