@@ -42,6 +42,7 @@ func (a *App) Initialize(config *config.Config) {
 	// }
 
 	a.DB = model.DBMigrate(db)
+	a.DB = model.DBMigrateUser(db)
 	a.Router = mux.NewRouter()
 	a.setRouters()
 }
@@ -49,6 +50,8 @@ func (a *App) Initialize(config *config.Config) {
 // Set all required routers
 func (a *App) setRouters() {
 	// Routing for handling the projects
+	a.Get("/api/users", a.GetAllUsers)
+	a.Post("/api/createUser", a.CreateUser)
 	a.Get("/api/spots", a.GetAllSurfSpots)
 	a.Post("/api/createSpot", a.CreateSurfSpots)
 	a.Get("/api/spots/{id}", a.GetSurfSpot)
@@ -96,6 +99,13 @@ func (a *App) UpdateSurfSpot(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) DeleteSurfSpot(w http.ResponseWriter, r *http.Request) {
 	handler.DeleteSurfSpot(a.DB, w, r)
+}
+
+func (a *App) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	handler.GetAllUsers(a.DB, w, r)
+}
+func (a *App) CreateUser(w http.ResponseWriter, r *http.Request) {
+	handler.CreateUser(a.DB, w, r)
 }
 
 // Run the app on it's router
