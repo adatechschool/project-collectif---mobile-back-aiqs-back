@@ -3,10 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-
+	"strconv"
 	"wave/model"
 
 	"github.com/gorilla/mux"
+
 	// "github.com/jinzhu/gorm"
 	// "github.com/go-gorm/gorm"
 	"gorm.io/gorm"
@@ -54,8 +55,9 @@ func CreateSurfSpots(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 func GetSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	id := vars["ID"]
+	println(id)
+	//id := strconv.ParseInt(vars["ID"], 10, 32)
 	surfSpot := getSurfSpotOr404(db, id, w, r)
 	if surfSpot == nil {
 		return
@@ -65,8 +67,8 @@ func GetSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 func UpdateSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	id := vars["ID"]
+	//id := strconv.ParseInt(vars["ID"], 10, 32)
 	surfSpot := getSurfSpotOr404(db, id, w, r)
 	if surfSpot == nil {
 		return
@@ -88,8 +90,8 @@ func UpdateSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 func DeleteSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	id := vars["ID"]
+	//id := strconv.ParseInt(vars["ID"], 10, 32)
 	surfSpot := getSurfSpotOr404(db, id, w, r)
 	if surfSpot == nil {
 		return
@@ -120,7 +122,9 @@ func DeleteSurfSpot(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 // getEmployeeOr404 gets a employee instance if exists, or respond the 404 error otherwise
 func getSurfSpotOr404(db *gorm.DB, id string, w http.ResponseWriter, r *http.Request) *model.Surf {
 	surf := model.Surf{}
-	if err := db.First(&surf, model.Surf{ID: id}).Error; err != nil {
+	new_id, nr := strconv.Atoi(id)
+	print(nr)
+	if err := db.First(&surf, model.Surf{ID: new_id}).Error; err != nil {
 		respondError(w, http.StatusNotFound, err.Error())
 		return nil
 	}

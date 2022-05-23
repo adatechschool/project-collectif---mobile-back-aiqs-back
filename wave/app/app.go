@@ -24,7 +24,8 @@ type App struct {
 
 // App initialize with predefined configuration
 func (a *App) Initialize(config *config.Config) {
-	dsn := "root:root@tcp(127.0.0.1:8889)/surfdatabase"
+	dsn := "root:root@tcp(docker.for.mac.localhost:3306)/surfdatabase"
+	//dsn := "docker:@tcp(docker.for.mac.localhost:3306)/surfdatabase"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
@@ -76,7 +77,7 @@ func (a *App) Delete(path string, f func(w http.ResponseWriter, r *http.Request)
 	a.Router.HandleFunc(path, f).Methods("DELETE")
 }
 
-// Handlers to manage Employee Data
+// Handlers to manage SurfSpots Data
 func (a *App) GetAllSurfSpots(w http.ResponseWriter, r *http.Request) {
 	handler.GetAllSurfSpots(a.DB, w, r)
 }

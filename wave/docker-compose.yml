@@ -11,19 +11,31 @@ services:
       - .:/wave
     ports:
       - 8080:8080
-  db:
-    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: surfdatabase
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: password
+  db:
+    #platform: linux/x86_64
+    image: mysql:8.0
+    container_name: surfdatabase
+    environment:
+      # DB_HOST: host.docker.internal
+      MYSQL_HOST: docker.for.mac.localhost
+      MYSQL_DATABASE: surfdatabase
+      MYSQL_USER: ql
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
       TZ: 'Europe/Paris'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    #command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db-data:/var/lib/mysql
       - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - 8889:8889
+      - 3306:3306
 
 volumes:
   db-data:
     driver: local
+
