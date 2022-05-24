@@ -29,19 +29,17 @@ func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	user := model.User{}
 
 	json.NewDecoder(r.Body).Decode(&user)
-
 	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Println(err)
 		err := ErrorResponse{
-			Err: "Password Encryption  failed",
+			Err: "Password Encryption failed",
 		}
 		json.NewEncoder(w).Encode(err)
 	}
 
 	user.Password = string(pass)
-
-	createdUser := db.Create(user)
+	createdUser := db.Create(&user)
 	var errMessage = createdUser.Error
 
 	if createdUser.Error != nil {
